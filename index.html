@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="main.css" rel="stylesheet" />
+</head>
+<body>
+    <nav>
+        <!--<ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/cv">CV</a></li>
+            <li><a href="/blog">Blog</a></li>
+        </ul>-->
+    </nav>
+    <div class="container">
+        <div class="blurb">
+            <h1>Angular CLI Basic Commands</h1>
+            <p>In Order to use the angular CLI you need to install it globally, it needs to install it globally because we have to use it from command line. One of the prerequisite to installing angular CLI is that node should be installed on the machine. To install the CLI run following command from node.js command prompt:</p>
+
+            <code>G:\Angular\testapp>npm install @angular/cli -g</code>
+
+            <p>When the above command is executed it will go to the cloud to the NPM (node package manager) and get the angular CLI and installs it on the local machine. To verify that angular CLI is installed run the following command:</p>
+
+            <code>G:\Angular\testapp>ng -v</code>
+            <img src="images/1.png" />
+
+            <p>It will list the angular CLI version or can be verified using the following command:</p>
+
+            <code>G:\Angular\testapp>npm list -g @angular/cli</code><br />
+            <code>C:\Users\manish\AppData\Roaming\npm</code><br />
+            <code>`-- <span style="color:yellow">@angular/cli@6.0.5</span></code>
+
+            <p>Once angular CLI is installed we are ready to generate our project. Let’s do it.</p><br />
+
+            <h2>Generating Project Using Angular CLI</h2>
+            <p>As we know angular CLI has a command line interface so we make use of ng command which represents angular CLI. In order to generate a new project we use the following command:</p>
+            <p>ng new &lt;name of the project&gt; &lt;options&gt;</p>
+            <p>Before running the above command set the directory where you want your project to reside. The fastest way of creating the project and its folder structure is to skip the installation of modules that are required by your project as it is the most time consuming process. Let’s run the above command in the command prompt with –skip-install option and see:</p>
+            <code>G:\Angular>ng new myApplication1 --skip-install</code><br />
+            <img src="images/2.png" />
+            <p><b>–skip-install:</b> Using this option with new command to generate the project will generate all the configuration files, folder structure as well as the module and the default component for us but will not install the modules that are required by our project. Let’s look at other options that we can use with new command:</p>
+
+            <p><b>--dry-run:</b> If we want to see what files will be generated when we run the new command to generate our project but we don’t want to actually create any project or files than we can make use of this option. Let’s take a look at its usage:</p>
+
+            <code>G:\Angular>ng new myApplication2 --dry-run</code><br />
+            <img src="images/3.png" />
+
+            <p>When you run with –dry-run option you will see all the files and folder structure that it is going to generate but will not make any changes or create your folder. It can be checked by going to folder where you want to create your project, myApplicaion2 project will not be there. </p>
+            <p><b>--prefix:</b> If you check the angular.json file there will be a key named prefix that will be the prefix used when you will be generating components using the blueprints for the selector property value. By default it will be app, if you want to change the value of that property we can make use of prefix option with the new command. Let’s see this in action:</p>
+
+            <code>G:\Angular>ng new myApplication2 --skip-install --prefix mp</code><br />
+
+            <p>Now if we navigate to our project and open the angular.json file and verify the prefix property value it will be set as mp, so we can set any value for that.</p>
+
+            <p><b>--routing:</b> There may be scenario when you want to implement routing in your application. We can do that by importing the RouterModule and then passing it as dependency to the imports array of the module in which we want to define the routing and then configuring the routes either in the same file or we want to create a different module than we need to import it and specify it as dependency in our imports array. While generating project if we use routing option above things will be done for us and we just need to define our routes. Let’s see it in action:</p>
+            <code>G:\Angular>ng new myApplication3 --skip-install --routing</code><br />
+            <img src="images/4.png" />
+
+        <p>Notice that the CLI generated a new module for us which will define our routes, which will not be available when –routing option is not used. For a list of other options that can be used with new command run npm new –help, it will list all the options. We can make use of options individually or as a combine them together.</p>
+        <p>Now we have our project set up, we will require to create components, services, pipes etc. Let’s take a look at creating those using blueprints.</p>
+        </div><!-- /.blurb -->
+    </div><!-- /.container -->
+    <footer>
+        <ul>
+            <li><a href="mailto:hankquinlanhub@gmail.com">email</a></li>
+            <li><a href="https://github.com/hankquinlan">github.com/hankquinlan</a></li>
+        </ul>
+    </footer>
+</body>
+</html>
