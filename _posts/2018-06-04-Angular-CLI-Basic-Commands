@@ -1,0 +1,343 @@
+<h1>Angular CLI Basic Commands</h1>
+
+            <p>In Order to use the angular CLI you need to install it globally, it needs to install it globally because we have to use it from command line. One of the prerequisite to installing angular CLI is that node should be installed on the machine. To install the CLI run following command from node.js command prompt:</p>
+
+
+
+            <code>G:\Angular\testapp>npm install @angular/cli -g</code>
+
+
+
+            <p>When the above command is executed it will go to the cloud to the NPM (node package manager) and get the angular CLI and installs it on the local machine. To verify that angular CLI is installed run the following command:</p>
+
+
+
+            <code>G:\Angular\testapp>ng -v</code>
+
+            <img src="images/1.png" />
+
+
+
+            <p>It will list the angular CLI version or can be verified using the following command:</p>
+
+
+
+            <code>G:\Angular\testapp>npm list -g @angular/cli</code><br />
+
+            <code>C:\Users\manish\AppData\Roaming\npm</code><br />
+
+            <code>`-- <span style="color:yellow">@angular/cli@6.0.5</span></code>
+
+
+
+            <p>Once angular CLI is installed we are ready to generate our project. Let’s do it.</p><br />
+
+
+
+            <h2>Generating Project Using Angular CLI</h2>
+
+            <p>As we know angular CLI has a command line interface so we make use of ng command which represents angular CLI. In order to generate a new project we use the following command:</p>
+
+            <p>ng new &lt;name of the project&gt; &lt;options&gt;</p>
+
+            <p>Before running the above command set the directory where you want your project to reside. The fastest way of creating the project and its folder structure is to skip the installation of modules that are required by your project as it is the most time consuming process. Let’s run the above command in the command prompt with –skip-install option and see:</p>
+
+            <code>G:\Angular>ng new myApplication1 --skip-install</code><br />
+
+            <img src="images/2.png" />
+
+            <p><b>–skip-install:</b> Using this option with new command to generate the project will generate all the configuration files, folder structure as well as the module and the default component for us but will not install the modules that are required by our project. Let’s look at other options that we can use with new command:</p>
+
+
+
+            <p><b>--dry-run:</b> If we want to see what files will be generated when we run the new command to generate our project but we don’t want to actually create any project or files than we can make use of this option. Let’s take a look at its usage:</p>
+
+
+
+            <code>G:\Angular>ng new myApplication2 --dry-run</code><br />
+
+            <img src="images/3.png" />
+
+
+
+            <p>When you run with –dry-run option you will see all the files and folder structure that it is going to generate but will not make any changes or create your folder. It can be checked by going to folder where you want to create your project, myApplicaion2 project will not be there. </p>
+
+            <p><b>--prefix:</b> If you check the angular.json file there will be a key named prefix that will be the prefix used when you will be generating components using the blueprints for the selector property value. By default it will be app, if you want to change the value of that property we can make use of prefix option with the new command. Let’s see this in action:</p>
+
+
+
+            <code>G:\Angular>ng new myApplication2 --skip-install --prefix mp</code><br />
+
+
+
+            <p>Now if we navigate to our project and open the angular.json file and verify the prefix property value it will be set as mp, so we can set any value for that.</p>
+
+
+
+            <p><b>--routing:</b> There may be scenario when you want to implement routing in your application. We can do that by importing the RouterModule and then passing it as dependency to the imports array of the module in which we want to define the routing and then configuring the routes either in the same file or we want to create a different module than we need to import it and specify it as dependency in our imports array. While generating project if we use routing option above things will be done for us and we just need to define our routes. Let’s see it in action:</p>
+
+            <code>G:\Angular>ng new myApplication3 --skip-install --routing</code><br />
+
+            <img src="images/4.png" />
+
+
+
+            <p>Notice that the CLI generated a new module for us which will define our routes, which will not be available when –routing option is not used. For a list of other options that can be used with new command run npm new –help, it will list all the options. We can make use of options individually or as a combine them together.</p>
+
+            <p>Now we have our project set up, we will require to create components, services, pipes etc. Let’s take a look at creating those using blueprints.</p><br />
+
+
+
+            <h2>Blueprints in Action</h2>
+
+            <p>A blueprint is a concept in angular that is used for creating features or generate code and comes out of the box, it’s like as we make use of class to create objects. In order to generate features using blueprints we use following command:</p>
+
+            <p>ng generate &lt;blueprint name&gt; &lt;options&gt;</p>
+
+            <p>When we fire the above command it will generate a feature such as a component, service etc. by making use of the blueprint file.</p><br />
+
+
+
+            <h3>Generating Component Using Blueprints</h3>
+
+            <p>We can generate a component manually as well as using the angular CLI. If we have to generate the component manually than we need to create all the .ts, .html, .ts and .spec files on our own and have to reference them on our own correctly and import the component in the module and declare it in the declarations array of the module decorator. Angular takes care of all the above steps if we create a component using CLI. Following is the command used to generate the component using CLI:</p>
+
+            <p>ng generate component &lt;options&gt;</p>
+
+            <p>I will be using the –dry-run option for demonstration purpose, you should remove it when you actually need to create a component as per your requirements. Let’s take a look at creating component using CLI. </p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run</code><br />
+
+            <img src="images/5.png" />
+
+
+
+            <p><b>--flat:</b> Here we are creating a component named myFirstComponent and angular CLI will generate all the files required for generating a component and perform above steps. By default –flat flag is set to false which means that a new folder will be created for each component, but if we want that the component should not be placed in its folder we can do it setting the –flat to true. Let’s try some of the options:</p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run --flat true</code><br />
+
+            <img src="images/6.png" />
+
+            <p>As you can see that when we set the flag to true it’s is not creating a new folder as it was in the above step.</p>
+
+
+
+            <p><b>--inline-template:</b>There may be a requirement that instead of specifying the template of the component in an html file, you want to create inline template. By default for components this flag is set to false. Let’s set this flag to true and see the output:</p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run --inline-template true</code><br />
+
+            <img src="images/7.png" />
+
+            <p>As you can see that when we set the flag to true a new stylesheet or css file is not generated.</p>
+
+
+
+            <p><b>--prefix:</b> If you want to set a different prefix for the selector property in the component metadata than you can make use of this flag. </p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run --inline-template true</code><br />
+
+            <img src="images/8.png" />
+
+
+
+            <p><b>--spec:</b></p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run --spec false</code><br />
+
+            <img src="images/9.png" />
+
+            <p>As we have seen when ran the above commands a spec.ts file got generated which is a test file, if we don’t want to generate that we can set –spec flag to false. By default it is set to true.</p>
+
+
+
+            <p>All the above flags can be used individually or a combination of them can be used depending upon our requirement.</p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run --spec false --prefix test --inline-template true --inline-style true</code><br />
+
+            <img src="images/10.png" /><br /><br /><br />
+
+
+
+            <h3>Generating Service Using Blueprints</h3>
+
+            <p>If we have to generate a service manually than we will have to create a separate file for the service and do all the necessary imports and decorate our service class with a decorator and specify its metadata, while using CLI we can do the above steps using a single command. We will be using the following command:</p>
+
+            <p>ng generate service &lt;options&gt;</p>
+
+            <code>G:\Angular\myApplication2>ng generate service myFirstService --dry-run</code><br />
+
+            <img src="images/11.png" />
+
+            <p>When a service is generated using the CLI it won’t register its underlying provider in the module or the component that part we need to take care of. Let’s try some options with service generation.</p>
+
+
+
+            <p><b>--flat:</b> As we already know this flag indicates whether or not a folder should be created for the feature. In case of service this flag is set to true, let’s change it to false and see:</p>
+
+            <code>G:\Angular\myApplication2>ng generate service myFirstService --dry-run --flat false</code><br />
+
+            <img src="images/12.png" />
+
+            <p>As you can see that the files required to create the service are placed in its own folder.</p>
+
+
+
+            <p><b>--spec:</b> As we have seen when ran the above commands a spec.ts file got generated which is a test file, if we don’t want to generate that we can set –spec flag to false. By default it is set to true.</p>
+
+            <code>G:\Angular\myApplication2>ng generate service myFirstService --dry-run --flat false --spec false</code><br />
+
+            <img src="images/13.png" /><br /><br /><br />
+
+
+
+            <h3>Generating Directives Using Blueprints</h3>
+
+            <p>If we have to generate a directive manually than we would have to create all the required files and then do all the necessary imports and exports and then declare the directive in the declarations array of the module. Angular CLI makes this process simple by allowing us to generate the directive using blueprints. Let’s take a look at it. We will be using the following command to generate a directive:</p>
+
+            <p>ng generate directive &lt;options&gt;</p>
+
+            <code>G:\Angular\myApplication2>ng generate directive myFirstDirective --dry-run</code><br />
+
+            <img src="images/14.png" />
+
+            <p>As you can see that when we ran the above command angular created all the required files for us and updated the module as well. Let’s take a look at some other options:</p>
+
+
+
+            <p><b>--flat:</b> By default this flag is set to true for directives so we can observe that when ran the command to generate a directive it is placed in the app folder, separate folder is not created for it. Let’s set it to false and examine the outcome:</p>
+
+            <code>G:\Angular\myApplication2>ng generate directive myFirstDirective --dry-run --flat false</code><br />
+
+            <img src="images/15.png" />
+
+            <p>As you can notice that the directive files are placed in its own folder.</p>
+
+
+
+            <p><b>--spec:</b></p>
+
+            <code>G:\Angular\myApplication2>ng generate directive myFirstDirective --dry-run --flat false --spec false</code><br />
+
+            <img src="images/16.png" />
+
+            <p>By default –spec flag is set to true, if we do not want to generate a spec or test file we can set it to false as we did above.</p><br />
+
+
+
+            <h3>Generating Pipe Using Blueprints</h3>
+
+            <p>When we have to generate a pipe manually we need to take care of many things like creating the mandatory files and doing imports and exports and implementing the PipeTransform interface and implementing its transform function and then registering it in the declarations array of the module. While doing things manually if we miss out something than it will lead to errors. So angular CLI helps us in generating those using blueprints. Following is the command used to generate a pipe:</p>
+
+            <p>ng generate pipe &lt;options&gt;</p>
+
+            <code>G:\Angular\myApplication2>ng generate pipe myFirstPipe --dry-run</code><br />
+
+            <img src="images/17.png" />
+
+            <p>As you can see that when we ran the above command angular created all the required files for us and updated the module as well. Let’s take a look at some other options:</p>
+
+
+
+            <p><b>--flat:</b> By default this flag is set to true for pipes so we can observe that when ran the command to generate a pipe it is placed in the app folder, separate folder is not created for it. Let’s set it to false and examine the outcome:</p>
+
+            <code>G:\Angular\myApplication2>ng generate pipe myFirstPipe --dry-run --flat false</code><br />
+
+            <img src="images/18.png" />
+
+            <p>As you can notice that the pipe files are placed in its own folder.</p>
+
+
+
+            <p><b>--spec:</b>By default –spec flag is set to true, if we do not want to generate a spec or test file we can set it to false. Let’s see it in action:</p>
+
+            <code>G:\Angular\myApplication2>ng generate pipe myFirstPipe --dry-run --flat false --spec false</code><br />
+
+            <img src="images/19.png" /><br /><br /><br />
+
+
+
+            <h3>Generating NgModule Using Blueprints</h3>
+
+            <p>In order to generate a module we use the following command:</p>
+
+            <p>ng generate module &lt;options&gt;</p>
+
+            <code>G:\Angular\myApplication2>ng generate module myFirstModule --dry-run</code><br />
+
+            <img src="images/20.png" />
+
+            <p>There may be a scenario when you have to create a different module for a specific feature than you can take help of CLI and generate it. It will do all the necessary imports and generate the module for us. Let’s take a look at some of the options:</p>
+
+
+
+            <p><b>--flat:</b>By default this flag is set to true which means that the CLI will create all the files for the module in a specific folder or directory. If we don’t want to create a directory for the component we can set this flag to true.</p>
+
+            <code>G:\Angular\myApplication2>ng generate module myFirstModule --dry-run --flat true</code><br />
+
+            <img src="images/21.png" />
+
+            <p>As you can notice no folder is created for the module files, they are placed in the app directory.</p>
+
+
+
+            <p><b>--spec:</b></p>
+
+            <code>G:\Angular\myApplication2>ng generate module myFirstModule --dry-run --spec false</code><br />
+
+            <img src="images/22.png" />
+
+            <p>By default this flag is set to true so we can see that spec file was created earlier, but when we set it to false spec file is not created.</p>
+
+
+
+            <p>There may be scenario when you are generating component, directive, service, and pipes in your angular application using the CLI, but there exists more than one module and you want to specify the module with which you want to register the feature this can be achieved by using following command:</p>
+
+            <p>ng generate &lt;blueprint&gt; moduleFolderName/blueprintName(name of component, pipe, etc.) <options></p>
+
+            <img src="images/23.png" />
+
+
+
+            <p>If we don’t specify the module folder in which we want to register the feature than angular CLI will create it in the module folder available in the closest directory we are switched to. </p>
+
+            <code>G:\Angular\myApplication2>ng generate component myFirstComponent --dry-run</code><br />
+
+            <img src="images/24.png" />
+
+
+
+            <p>Here we did not specify the name of the module with which we want angular CLI to declare our component so the closest directory in which the module exists is app (app.module), the CLI declares it in that module.</p>
+
+            <code>G:\Angular\myApplication2\src\app\my-first-module1>ng generate component myFirstComponent --dry-run</code><br />
+
+            <img src="images/25.png" />
+
+            <p>Here we can see that we did not specify the name of the module folder but by default it picks up my-first-module1 with which it will register component as we are in my-first-module1 directory and the module available there is my-first-module1.</p>
+
+
+
+            <p>A situation may arise when we will be creating a new module and we want to define routing for that module. Angular CLI also provides that functionality out of the box for us. It can be done by running the following command:</p>
+
+            <p>ng generate module &lt;modulename&gt; – routing</p>
+
+            <code>G:\Angular\myApplication2\src\app>ng generate module childModule --routing</code><br />
+
+            <img src="images/26.png" />
+
+            <p>This will create a module as well as a routing module for us. Following things will be done by the angular CLI to connect the dots:</p>
+
+
+
+            <ol>
+
+                <li><p>It will create a module named childModule in its own directory.</p></li>
+
+                <li><p>It will create a routing module child-routing-module in the child module directory.</p></li>
+
+                <li><p>All the imports for the child module we taken care of by angular CLI.</p></li>
+
+                <li><p>All the imports and exports from RouterModule will be taken care of by Angular CLI.</p></li>
+
+                <li><p>We just need to import the childModule in our app module to connect all the dots.</p></li>
+
+            </ol>
