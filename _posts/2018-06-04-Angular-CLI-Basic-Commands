@@ -1,3 +1,9 @@
+---
+layout: post
+title: "Angular CLI Basic Commands"
+date: 2018-06-04
+---
+
 <h1>Angular CLI Basic Commands</h1>
 
             <p>In Order to use the angular CLI you need to install it globally, it needs to install it globally because we have to use it from command line. One of the prerequisite to installing angular CLI is that node should be installed on the machine. To install the CLI run following command from node.js command prompt:</p>
