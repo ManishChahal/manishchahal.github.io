@@ -1,0 +1,25 @@
+<h1>Connecting to the database:</h1>
+
+<p>After mongo is installed on your system you need to run the daemon or the database server and run the shell to do database operations, it is done as follows:</p>
+
+<ol>
+    <li><p>Point to the directory where you have installed your mongo db and go to the bin folder. For e.g.:  if it is installed in C: drive than go to C:\Program Files\MongoDB\Server\3.6\bin and copy the path from the address bar of the file explorer.</p></li>
+    <li>
+        <p>Open the command prompt in elevated or normal mode and change the directory to the path in above step</p>
+        <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;</code>
+    </li>
+    <li>
+        <p>Run the following command to run the daemon or database server and set the location where your database files will be stored. For e.g.: if you want to store your data files in G:\MongoDB\db than give it as the command argument as follows :</p>
+        <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;mongod -dbpath "G:\MongoDB\db"</code>
+    </li>
+    <li>
+        <p>You can verify whether your database server is started or not by checking the following in the command window:</p>
+        <img src="images/27.png" />
+    </li>
+    <li><p>After your database server is started now open another command prompt window and change the directory to the one in step 1 which points to the bin folder. </p></li>
+    <li>
+        <p>Mongo provides us a shell which is used for performing operations like create database, collections, CRUD operations and many more. To start the shell run the following command in the command prompt window opened in step 5 :</p>
+        <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;mongo</code>
+    </li>
+</ol>
+<p>Now your database server and the shell is running, so we can proceed with some database operations.</p>
