@@ -1,8 +1,7 @@
----
-layout: post
-title: "Basic Operations in Mongo Db - 1"
-date: 2018-06-05
----
+<head>
+
+    <link href="main.css" rel="stylesheet" />
+</head>
 
 <h2>Connecting to the database:</h2>
 
@@ -12,11 +11,15 @@ date: 2018-06-05
     <li><p>Point to the directory where you have installed your mongo db and go to the bin folder. For e.g.:  if it is installed in C: drive than go to C:\Program Files\MongoDB\Server\3.6\bin and copy the path from the address bar of the file explorer.</p></li>
     <li>
         <p>Open the command prompt in elevated or normal mode and change the directory to the path in above step</p>
-        <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;</code>
+        <div class="code">
+            <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;</code>
+        </div>
     </li>
     <li>
         <p>Run the following command to run the daemon or database server and set the location where your database files will be stored. For e.g.: if you want to store your data files in G:\MongoDB\db than give it as the command argument as follows :</p>
-        <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;mongod -dbpath "G:\MongoDB\db"</code>
+        <div class="code">
+            <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;mongod -dbpath "G:\MongoDB\db"</code>
+        </div>
     </li>
     <li>
         <p>You can verify whether your database server is started or not by checking the following in the command window:</p>
@@ -25,7 +28,51 @@ date: 2018-06-05
     <li><p>After your database server is started now open another command prompt window and change the directory to the one in step 1 which points to the bin folder. </p></li>
     <li>
         <p>Mongo provides us a shell which is used for performing operations like create database, collections, CRUD operations and many more. To start the shell run the following command in the command prompt window opened in step 5 :</p>
-        <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;mongo</code>
+        <div class="code">
+            <code>C:\Program Files\MongoDB\Server\3.6\bin&gt;mongo</code>
+        </div>
     </li>
 </ol>
 <p>Now your database server and the shell is running, so we can proceed with some database operations.</p>
+
+<h2>Creating a database and collection: </h2>
+<p>The first and foremost thing to perform database operations we need to have a database , by default mongo provides a default database named test which you can check by running ‘db’ command in the mongo shell which is used to display the database in which you are currently working in . In order to create your own database run the following command:</p>
+<div class="code">
+    <code>&gt; use firstDatabase</code><br />
+    <code>switched to db firstDatabase</code><br />
+    <code>&gt;</code>
+</div>
+<p>‘use’ command takes an argument i.e. the name of the database which you want to create or you want to switch to which already exists. After your database is created run the following command to list your database:</p>
+<div class="code">
+    <code>&gt; db</code><br />
+    <code>firstDatabase</code><br />
+    <code>&gt;</code>
+</div>
+<p>The ‘db’ is an object that points to your current database in use. As we know Mongo db is a NoSQL database so there is no concept of tables, so here we have collections which are used to store data in JSON (JavaScript Object Notation) format as key value pairs. A collection is an unstructured source that holds the data in the form of documents (objects). Each object can have varying or same properties. In order to create a collection we use the createCollection method on the db object and pass it the name of the collection as an argument. Following is the command that is used to create a collection:</p>
+<div class="code">
+    <code>&gt; db.createCollection("myFirstCollection")</code><br />
+    <code>{ "ok" : 1 }</code><br />
+    <code>&gt;</code>
+</div>
+<p>If the collection is created successfully we receive the ok message with 1. To list the collection that you have created we use the show collections command:</p>
+<div class="code">
+    <code>&gt; show collections</code><br />
+    <code>myFirstCollection</code>
+</div>
+<p>It will list all the collections in the current database in use. There might be scenario where you have created a collection by mistake and you want to delete it, In order to delete a collection drop method is used on the collection that we want to delete as follows:</p>
+<div class="code">
+    <code>&gt; db.myFirstCollection.drop()</code><br />
+    <code>true</code><br />
+    <code>&gt; show collections</code><br />
+    <code>&gt;</code>
+</div>
+<p>As you can see that myFirstCollection is deleted. To delete the database we use the dropdatabase method on db object as follows:</p>
+<div class="code">
+    <code>&gt; db.dropDatabase()</code><br />
+    <code>{ "dropped" : "FirstDatabase", "ok" : 1 }</code><br />
+    <code>&gt;</code>
+</div>
+<p>It will drop the database in use.</p>
+<p>Now we are done with creating and dropping a database and a collection it’s time to insert some data into the collection.</p>
+
+
