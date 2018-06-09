@@ -1,4 +1,4 @@
-﻿body {
+body {
     margin: 60px auto;
     width: 70%;
 }
@@ -28,7 +28,8 @@ p {
     line-height: 1.4em;
     color: #333;
 }
-code {
+.code{
+    width:100%;
     font-size: 1.3em;
     background-color:black;
     color:white;
