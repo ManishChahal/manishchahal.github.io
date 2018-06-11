@@ -1,0 +1,488 @@
+<h2>Reading Data from Collection</h2>
+<p>Find method is used to read documents from a collection. Command to read data is as follows:</p>
+<p>db.collectName.find(query, projection)</p>
+<p>Let’s take a look at how we can fetch documents using find method:</p>
+<ol>
+    <li>
+        <p>1.	If we want to fetch all the documents from a collection than we don’t pass the query argument and also we want to fetch complete schema along with values for each document than we will not be passing projection argument. Let’s look at it in action:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find()<br />
+                { "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } }<br />
+                { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") }<br />
+                { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                &gt;
+            </code>
+        </div>
+        <br />
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({}, {})<br />
+                { "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } }<br />
+                { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") }<br />
+                { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                &gt;
+            </code>
+        </div>
+        <p>As you can see that it retrieved us all the documents, but it is not readable. You can use the find method to fetch all the documents out of the two approaches shown above. So to fetch the documents in a readable format we use pretty method on top of find method to show user friendly result. Let’s take a look:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find().pretty()<br />
+                {<br />
+                "_id" : ObjectId("5b193a230f021394ee8cd122"),<br />
+                "name" : "John",<br />
+                "stack" : "MEAN",<br />
+                "technologies" : [<br />
+                "Angular",<br />
+                "Express",<br />
+                "Mongo",<br />
+                "Node",<br />
+                "Passport"<br />
+                ],<br />
+                "address" : {<br />
+                "street" : "Wall Street",<br />
+                "city" : "New York"<br />
+                }<br />
+                }<br />
+                { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") }<br />
+                { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                &gt;
+            </code>
+        </div>
+        <p>Here you can see that the documents are more readable.</p>
+    </li>
+    <li>
+        <p>Let’s pass some query as an argument to the find method and see :</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({name:"John"}).pretty()<br />
+                {<br />
+                "_id" : ObjectId("5b193a230f021394ee8cd122"),<br />
+                "name" : "John",<br />
+                "stack" : "MEAN",<br />
+                "technologies" : [<br />
+                "Angular",<br />
+                "Express",<br />
+                "Mongo",<br />
+                "Node",<br />
+                "Passport"<br />
+                ],<br />
+                "address" : {<br />
+                "street" : "Wall Street",<br />
+                "city" : "New York"<br />
+                }<br />
+                }<br />
+                &gt;
+            </code>
+        </div>
+        <p>Here we passed the query which means that find me all the documents where name property exists and the value for that property is John.</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({Name:"John"}).pretty()<br />
+                &gt; db.myFirstCollection.find({name:"JOHN"}).pretty()
+            </code>
+        </div>
+        <p>Notice one thing that the key and value are case sensitive. As we passed Name instead of name in first command no documents are fetched and JOHN in place of John in that case as well no document is fetched.</p>
+    </li>
+    <li>
+        <p>Let’s pass a query based on which multiple documents are fetched:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({fName:"Kyle"}).pretty()<br />
+                { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                &gt;
+            </code>
+        </div>
+        <p>Here we passed a query which means that fetch me all the documents which have a property fName and value for that is Kyle.</p>
+    </li>
+    <li>
+        <p>Let’s take a look at more complex query where we want to fetch a document which has a sub document:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({"address.street":"Wall Street"}).pretty()<br />
+                {<br />
+                "_id" : ObjectId("5b193a230f021394ee8cd122"),<br />
+                "name" : "John",<br />
+                "stack" : "MEAN",<br />
+                "technologies" : [<br />
+                "Angular",<br />
+                "Express",<br />
+                "Mongo",<br />
+                "Node",<br />
+                "Passport"<br />
+                ],<br />
+                "address" : {<br />
+                "street" : "Wall Street",<br />
+                "city" : "New York"<br />
+                }<br />
+                }<br />
+                &gt;
+            </code>
+        </div>
+        <p>Here the query that we have passed to the find method means that find me all the document/documents which have a property named address and that address property holds a sub document which has a property named street and has a value as Wall Street. Notice the quotation marks around the property name.</p>
+    </li>
+    <li>
+        <p>Let’s take a look at how to pass projection and what will be its impact on the documents fetched:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({fName:"Kyle"},{fName:1}).pretty()<br />
+                { "_id" : 8, "fName" : "Kyle" }<br />
+                { "_id" : 10, "fName" : "Kyle" }<br />
+                &gt;
+            </code>
+        </div>
+        <p>Here we have fetched the documents from the collections that have a property fName and the value for that property is Kyle. In addition to that we passed the projection argument as well which says that get me only the fName property and its value not all other properties. But we have not included the _id property still it is retrieved because whenever we fetch a document using project we explicitly have to tell that we want to exclude the _id property otherwise it will be retrieved. For including the property we give the property name and value as 1 which means we want to retrieve that property (0 signifies do not retrieve) than all other properties except that property will not be retrieved.</p>
+    </li>
+    <li>
+        <p>Let’s see how to exclude a property:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({fName:"Kyle"},{_id:0,fName:1}).pretty()<br />
+                { "fName" : "Kyle" }<br />
+                { "fName" : "Kyle" }
+            </code>
+        </div>
+        <p>Here you can see that we have excluded the _id property and included only the fName property. There can be a scenario where you want n number of properties to be excluded and retrieve all other than you can specify them as we have excluded the _id property or vice versa.</p>
+    </li>
+    <li>
+        <p>Inclusion and exclusion can’t be applied together except when _id property is specified, which means that we cannot say include fName and exclude lName else the compiler would complaint. _id property is a special case because it is included by default. Let’s take a look at it:</p>
+        <div class="code">
+            <code>
+                &gt; db.myFirstCollection.find({fName:"Kyle"},{fName:0, lName:1}).pretty()<br />
+                Error: error: {<br />
+                "ok" : 0,<br />
+                "errmsg" : "Projection cannot have a mix of inclusion and exclusion.",<br />
+                "code" : 2,<br />
+                "codeName" : "BadValue"<br />
+                }<br />
+                &gt;
+            </code>
+        </div>
+    </li>
+    <li>
+        <p>Let’s take a look at some comparison operators:</p>
+        <ol>
+            <li>
+                <h3>$eq (equals) :</h3>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({fName:{$eq:"Kyle"}}).pretty()<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+                    </code>
+                </div>
+                <p>Here it fetched us all the documents where fName property exists and the value for that property is equal to Kyle.  We can run this on string, arrays, numbers, sub-documents values as well.</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$eq:8}}).pretty()<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }
+                    </code>
+                </div>
+                <br />
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({technologies:{$eq:"Angular"}}).pretty()<br />
+                        {<br />
+                        "_id" : ObjectId("5b193a230f021394ee8cd122"),<br />
+                        "name" : "John",<br />
+                        "stack" : "MEAN",<br />
+                        "technologies" : [<br />
+                        "Angular",<br />
+                        "Express",<br />
+                        "Mongo",<br />
+                        "Node",<br />
+                        "Passport"<br />
+                        ],<br />
+                        "address" : {<br />
+                        "street" : "Wall Street",<br />
+                        "city" : "New York"<br />
+                        }<br />
+                        }<br />
+                        { "_id" : 20, "name" : "Scott", "technologies" : "Angular" }
+                    </code>
+                </div>
+                <p>Here it returned the document which has technologies property and value as angular which can exist in an array or a key value pair. But if you want that only those documents should be fetched where an array is assigned to technologies property than you can modify your query like this:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({"technologies.0":{$eq:"Angular"}}).pretty()<br />
+                        {<br />
+                        "_id" : ObjectId("5b193a230f021394ee8cd122"),<br />
+                        "name" : "John",<br />
+                        "stack" : "MEAN",<br />
+                        "technologies" : [<br />
+                        "Angular",<br />
+                        "Express",<br />
+                        "Mongo",<br />
+                        "Node",<br />
+                        "Passport"<br />
+                        ],<br />
+                        "address" : {<br />
+                        "street" : "Wall Street",<br />
+                        "city" : "New York"<br />
+                        }<br />
+                        }<br />
+                    </code>
+                </div>
+            </li>
+            <li>
+                <h3>$gt (Greater than):</h3>
+                <p>There can be a scenario where you want to fetch the documents which has a value greater than some property value. You can make use of it like this:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$gt:6}})<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 20, "name" : "Scott", "technologies" : "Angular" }
+                    </code>
+                </div>
+                <p>It works on strings as well:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({fName:{$gt:"Kyle"}})<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                        { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }
+                    </code>
+                </div>
+            </li>
+            <li>
+                <h3>$lt (Less than):</h3>
+                <p>There can be a scenario where you want to fetch the documents which has a less than some property value. You can make use of it like this:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$lt:5}})<br />
+                        { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                        { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                        { "_id" : 3, "fName" : "John", "lName" : "Papa" }
+                    </code>
+                </div>
+            </li>
+            <li>
+                <h3>$gte(Greater than equal to):</h3>
+                <p>There can be a scenario where you want to fetch the documents which has a value greater than or equal to some property value. You can make use of it like this:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$gte:6}})<br />
+                        { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 20, "name" : "Scott", "technologies" : "Angular" }
+                    </code>
+                </div>
+            </li>
+            <li>
+                <h3>$lte(Less than equal to):</h3>
+                <p>There can be a scenario where you want to fetch the documents which has a value less than or equal to some property value. You can make use of it like this:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$lte:6}})<br />
+                        { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                        { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                        { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                        { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }
+                    </code>
+                </div>
+            </li>
+            <li>
+                <h3>$in:</h3>
+                <p>There are scenarios where we want to fetch documents which contains a property and the value of that property is one of the values specified:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$in:[6,7,10]}})<br />
+                        { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+                    </code>
+                </div>
+                <p>We have fetched all the documents which have _id property and the value for that is either 6 or 7 or 10.</p>
+            </li>
+            <li>
+                <h3>$and:</h3>
+                <p>If we want to fetch the documents from a collection by passing a query which contains more than one key value pair as filter criteria than we make use of this operator. $and takes in an array of key value pairs. Let’s see it in action:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({$and:[{fName:"Kyle", lName:"Simpson"}]})<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+                        &gt; db.myFirstCollection.find({$and:[{fName:"Kyle", lName:"Allen"}]})
+                        &gt;
+                    </code>
+                </div>
+                <p>Here you can see that the first command returned us all the documents where the specified criteria is met but in second one no document is fetched because there does exist any document which has fName property and the value for that is Kyle and lName property has a value as Allen.</p>
+            </li>
+            <li>
+                <h3>Range:</h3>
+                <p>To specify a range we need to make use of $and , $gt/$gte and $lt/$lte. Let’s take a look at it and talk about it:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({$and:[{_id:{$gt:5}}, {_id:{$lt:20}}]})<br />
+                        { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+                    </code>
+                </div>
+                <p>Here you can see that I have passed multiple filtering criteria where I want to fetch all the documents which has _id property and the value for that property is greater than 5 and less than 20.</p>
+            </li>
+            <li>
+                <h3>$nin (Not in):</h3>
+                <p>We might have to exclude some documents based on some criteria than we can make use of this operator as follows:</p>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({_id:{$nin:[1,6,7,ObjectId("5b1b7a1277fdb7b166a2c198")]}})<br />
+                        { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                        { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                        { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }<br />
+                        { "_id" : 20, "name" : "Scott", "technologies" : "Angular" }<br />
+                        { "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } }
+                    </code>
+                </div>
+                <p>Here we have excluded all the documents whose _id is either 1 or 6 or 7 or ObjectId("5b1b7a1277fdb7b166a2c198"). As you can see that we can use randomly generated _id for the documents with our operators.</p>
+            </li>
+            <li>
+                <h3>$not :</h3>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({fName:{$not:{$eq:"Kyle"}}})<br />
+                        { "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } }<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") }<br />
+                        { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                        { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                        { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                        { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                        { "_id" : 20, "name" : "Scott", "technologies" : "Angular" }
+                    </code>
+                </div>
+                <p>It returned us all the documents where fNAme property value is not Kyle. One thing to note here is that $not works only with documents or regex. As you can see that we have passed it another query using standard operator which will find the documents which have a fName property and value is Kyle and we are negating that.</p>
+            </li>
+            <li>
+                <h3>$ne (Not equal to):</h3>
+                <div class="code">
+                    <code>
+                        &gt; db.myFirstCollection.find({fName:{$ne:"Kyle"}, name:{$ne:"John"}})<br />
+                        { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" }<br />
+                        { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") }<br />
+                        { "_id" : 3, "fName" : "John", "lName" : "Papa" }<br />
+                        { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }<br />
+                        { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" }<br />
+                        { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }<br />
+                        { "_id" : 20, "name" : "Scott", "technologies" : "Angular" }
+                    </code>
+                </div>
+                <p>As you can see that we only fetched documents that have fName not equal to Kyle or name not equal to John. Here you can see that this is another way of passing multiple filtering criteria if you don’t want to make use of $and operator, just pass them in a single object by separating with comma.</p>
+            </li>
+        </ol>
+    </li>
+    <li>
+        <p>As we have seen use of basic operations now let’s take a look at some more complex documents and fetching them.</p>
+        <div class="code" style="white-space:pre"><code>
+        &gt; db.myFirstCollection.find({_id:{$eq:30}}).pretty()
+        {
+        "_id" : 30,
+        "fName" : "Manish",
+        "lName" : "Chahal",
+        "technologies" : [
+            {
+                    "web" : [
+                        {
+                            "style" : "css",
+                            "markup" : "html"
+                        },
+                        {
+                            "backend" : "express"
+                        }
+                    ]
+                },
+                {
+                    "database" : [
+                        "mongo",
+                        "sql"
+                    ]
+            }
+        ]
+        }</code></div>
+        <p>Here we have this complex document which has a technologies property and to that an array is        assigned. Array consists of properties which in turn consists of array and sub documents. Let’s take a look at how to fetch this document based on the style or markup property value.</p>
+        <div class="code" style="white-space:pre"><code>
+        &gt; db.myFirstCollection.find({"technologies.0.web.0.style":"css"}).pretty()
+        {
+        "_id" : 30,
+        "fName" : "Manish",
+        "lName" : "Chahal",
+        "technologies" : [
+            {
+                    "web" : [
+                        {
+                            "style" : "css",
+                            "markup" : "html"
+                        },
+                        {
+                            "backend" : "express"
+                        }
+                    ]
+                },
+                {
+                    "database" : [
+                        "mongo",
+                        "sql"
+                    ]
+            }
+        ]
+        }</code></div>
+        <p>Here you can see that we fetched all document/documents which have a technologies property and to that an array is assigned which has a web property and that contains an array and in that we have sub documents and the first sub document has a property named style and value as css.</p>
+    </li>
+    <li>
+        <h3>$all:</h3>
+        <p>There are scenarios where we want to fetch documents which consists of an array and specify a query where all the specified elements should be available in the array at that time this operator comes into picture. Let’s take a look at its usage:</p>
+        <div class="code" style="white-space:pre"><code>
+        > db.myFirstCollection.find({technologies:{$all:["Angular", "Mongo"]}}).pretty()
+        {
+                "_id" : ObjectId("5b193a230f021394ee8cd122"),
+                "name" : "John",
+                "stack" : "MEAN",
+                "technologies" : [
+                        "Angular",
+                        "Express",
+                        "Mongo",
+                        "Node",
+                        "Passport"
+                ],
+                "address" : {
+                        "street" : "Wall Street",
+                        "city" : "New York"
+                }
+        }
+        {
+                "_id" : 50,
+                "name" : "John",
+                "stack" : "MEAN",
+                "technologies" : [
+                        "Angular",
+                        "Express",
+                        "Mongo",
+                        "Node",
+                        "Passport"
+                ]
+        }</code></div>
+        <p>It fetched us only those documents where Angular and Mongo both exists as technologies in the documents.</p>
+    </li>
+</ol>
