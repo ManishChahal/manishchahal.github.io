@@ -12,26 +12,26 @@ date: 2018-06-11
     <li>
         <p>1.	If we want to fetch all the documents from a collection than we don’t pass the query argument and also we want to fetch complete schema along with values for each document than we will not be passing projection argument. Let’s look at it in action:</p>
         <div class="code"><code>&gt; db.myFirstCollection.find() 
-                { "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } } 
-                { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" } 
-                { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" } 
-                { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") } 
-                { "_id" : 3, "fName" : "John", "lName" : "Papa" } 
-                { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" } 
-                { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" } 
-                { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" } 
-                &gt;</code></div>
+{ "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } } 
+{ "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" } 
+{ "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" } 
+{ "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") } 
+{ "_id" : 3, "fName" : "John", "lName" : "Papa" } 
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" } 
+{ "_id" : 1, "fName" : "Manish", "lName" : "Chahal" } 
+{ "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" } 
+&gt;</code></div>
          
         <div class="code"><code>&gt; db.myFirstCollection.find({}, {}) 
-                { "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } } 
-                { "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" } 
-                { "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" } 
-                { "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") } 
-                { "_id" : 3, "fName" : "John", "lName" : "Papa" } 
-                { "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" } 
-                { "_id" : 1, "fName" : "Manish", "lName" : "Chahal" } 
-                { "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" } 
-                &gt;</code></div>
+{ "_id" : ObjectId("5b193a230f021394ee8cd122"), "name" : "John", "stack" : "MEAN", "technologies" : [ "Angular", "Express", "Mongo", "Node", "Passport" ], "address" : { "street" : "Wall Street", "city" : "New York" } } 
+{ "_id" : 7, "fName" : "Nuri", "lName" : "Halperin" } 
+{ "_id" : 8, "fName" : "Kyle", "lName" : "Simpson" } 
+{ "_id" : ObjectId("5b1b7a1277fdb7b166a2c198") } 
+{ "_id" : 3, "fName" : "John", "lName" : "Papa" } 
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" } 
+{ "_id" : 1, "fName" : "Manish", "lName" : "Chahal" } 
+{ "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" } 
+&gt;</code></div>
         <p>As you can see that it retrieved us all the documents, but it is not readable. You can use the find method to fetch all the documents out of the two approaches shown above. So to fetch the documents in a readable format we use pretty method on top of find method to show user friendly result. Let’s take a look:</p>
         <div class="code"><code>&gt; db.myFirstCollection.find().pretty() 
 {
