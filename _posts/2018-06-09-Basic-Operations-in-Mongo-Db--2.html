@@ -3,18 +3,17 @@ layout: post
 title: "Basic Operations in Mongo Db - 2"  
 date: 2018-06-09  
 --- 
-
 <h2>Inserting Data in a Collection:</h2>
 <p>To insert a document into a database we use the Insert method on the collection in which we want to insert document. Let’s give it a try and then talk about it:</p>
 <div class="code"><code>&gt; db.myFirstCollection.insert({</code> 
-    <code>... name:"John",</code> 
-    <code>... stack:"MEAN",</code> 
-    <code>... technologies:["Angular", "Express", "Mongo", "Node", "Passport"],</code> 
-    <code>... address:</code> 
-    <code>... { street:"Wall Street", city:"New York" }</code> 
-    <code>... })</code> 
-    <code>WriteResult({ "nInserted" : 1 })</code> 
-    <code>&gt;</code></div>
+<code>... name:"John",</code> 
+<code>... stack:"MEAN",</code> 
+<code>... technologies:["Angular", "Express", "Mongo", "Node", "Passport"],</code> 
+<code>... address:</code> 
+<code>... { street:"Wall Street", city:"New York" }</code> 
+<code>... })</code> 
+<code>WriteResult({ "nInserted" : 1 })</code> 
+<code>&gt;</code></div>
 <p>As you can see here that the data to be insert should follow following rules:</p>\
 <ol>
     <li><p>It has to be JSON(JavaScript object notation)</p></li>
@@ -23,87 +22,77 @@ date: 2018-06-09
     <li><p>There is one and only one restriction i.e. the _id property which is the unique property, if you specify it than it will take the user provided value else mongo will generate a value for this property and add it to your document.</p></li>
 </ol>
 <p>As you see that I have inserted a document that has four properties and the address property holds a sub document as well. You can add any documents with any schema if it follows above 4 rules. There may be scenario when we want to insert more than one document than in that case we pass an array of documents to the insert method. </p>
-<div class="code"><code>
-        > db.myFirstCollection.insert([{ 
-        ... _id:7, 
-        ... fName:"Nuri", 
-        ... lName:"Halperin", 
-        ... } 
-        ... , 
-        ... { 
-        ... _id:8, 
-        ... fName:"Kyle", 
-        ... lName:"Simpson" 
-        ... }]) 
-        BulkWriteResult({ 
-        "writeErrors" : [ ], 
-        "writeConcernErrors" : [ ], 
-        "nInserted" : 2, 
-        "nUpserted" : 0, 
+<div class="code"><code>> db.myFirstCollection.insert([{ 
+ ... _id:7, 
+ ... fName:"Nuri", 
+ ... lName:"Halperin", 
+ ... } 
+ ... , 
+ ... { 
+ ... _id:8, 
+ ... fName:"Kyle", 
+ ... lName:"Simpson" 
+ ... }]) 
+ BulkWriteResult({ 
+ "writeErrors" : [ ], 
+ "writeConcernErrors" : [ ], 
+ "nInserted" : 2, 
+ "nUpserted" : 0, 
 
-        "nMatched" : 0, 
-        "nModified" : 0, 
-        "nRemoved" : 0, 
-        "upserted" : [ ] 
-        }) 
-        &gt;
-    </code></div> 
+ "nMatched" : 0, 
+ "nModified" : 0, 
+ "nRemoved" : 0, 
+ "upserted" : [ ] 
+ }) 
+ &gt;</code></div> 
 
 <h2>InsertOne method:</h2>
 <p>This method is used to enter only one document at a time, so the argument that is passes to this function can be a single object/document but not and array of documents. Let’s look what happens when we pass an array of objects:</p>
-<div class="code"><code>
-        &gt; db.myFirstCollection.InsertOne([{ 
-        ... _id:1, 
-        ... fName:"Manish", 
-        ... lName:"Chahal", 
-        ... }, 
-        ... { 
-        ... _id:2, 
-        ... fName:"Lisa", 
-        ... lName:"Simpson" 
-        ... }]) 
-        Bulk/addToOperationsList@src/mongo/shell/bulk_api.js:613:1 
-        Bulk/this.insert@src/mongo/shell/bulk_api.js:659:20 
-        DBCollection.prototype.insertOne@src/mongo/shell/crud_api.js:248:5 
-        @(shell):1:1 
-        &gt;
-    </code></div>
+<div class="code"><code>&gt; db.myFirstCollection.InsertOne([{ 
+... _id:1, 
+... fName:"Manish", 
+... lName:"Chahal", 
+... }, 
+... { 
+... _id:2, 
+... fName:"Lisa", 
+... lName:"Simpson" 
+... }]) 
+Bulk/addToOperationsList@src/mongo/shell/bulk_api.js:613:1 
+Bulk/this.insert@src/mongo/shell/bulk_api.js:659:20 
+DBCollection.prototype.insertOne@src/mongo/shell/crud_api.js:248:5 
+@(shell):1:1 
+&gt;</code></div>
 <p>It throws an error saying that array can’t be passed to this operation. Let’s give it a try by passing a single document as an argument:</p>
-<div class="code"><code>
-        &gt; db.myFirstCollection.insertOne({ 
-        ... _id:3, 
-        ... fName:"John", 
-        ... lName:"Papa" 
-        ... }) 
-        { "acknowledged" : true, "insertedId" : 3 } 
-        &gt;
-    </code></div>
+<div class="code"><code>&gt; db.myFirstCollection.insertOne({ 
+ ... _id:3, 
+ ... fName:"John", 
+ ... lName:"Papa" 
+ ... }) 
+ { "acknowledged" : true, "insertedId" : 3 } 
+ &gt;</code></div>
 <p>As you can see that when we pass it a single object it happily accepts and does not give any error. Depending on the use case we can make use of this function.</p>
  
 <h2>InsertMany method:</h2>
 <p>There are scenarios when we want to insert more than one document at a time so we make use of this method. It accepts an array of objects. We can insert one object as well as multiple objects by making use of this method but the argument has to be of type array.</p>
-<div class="code"><code>
-        &gt; db.myFirstCollection.insertMany({ 
-        ... _id:6, 
-        ... fName:"Deborah", 
-        ... lName:"Kurata" 
-        ... }) 
-        { "acknowledged" : true, "insertedIds" : [ 6 ] }
-    </code></div>
+<div class="code"><code>&gt; db.myFirstCollection.insertMany({ 
+... _id:6, 
+... fName:"Deborah", 
+... lName:"Kurata" 
+... }) 
+{ "acknowledged" : true, "insertedIds" : [ 6 ] }</code></div>
 <p>Let’s take a look at inserting multiple objects:</p>
-<div class="code"><code>
-        &gt; db.myFirstCollection.insertMany([{ 
-        ... _id:1, 
-        ... fName:"Manish", 
-        ... lName:"Chahal" 
-        ... }, 
-        ... { 
-        ... _id:2, 
-        ... fName:"Lisa", 
-        ... lName:"Simpson" 
-        ... }]) 
-        { "acknowledged" : true, "insertedIds" : [ 1, 2 ] } 
-        &gt;
-    </code></div>
+<div class="code"><code>&gt; db.myFirstCollection.insertMany([{ 
+... _id:1, 
+... fName:"Manish", 
+... lName:"Chahal" 
+... }, 
+... { 
+... _id:2, 
+... fName:"Lisa", 
+... lName:"Simpson" 
+... }]) 
+{ "acknowledged" : true, "insertedIds" : [ 1, 2 ] } 
+&gt;</code></div>
 <p>As you can see that we have inserted multiple documents.</p>
 <p>Insert method alone can do the operations which is done using insertOne and insertMany but there might me scenarios in your application where you just need to insert one document or multiple documents, so at that time these methods are useful to impose restrictions.</p>
