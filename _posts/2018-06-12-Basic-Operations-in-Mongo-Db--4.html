@@ -1,0 +1,503 @@
+---  
+layout: post  
+title: "Basic Operations in Mongo Db - 4"  
+date: 2018-06-12  
+---
+
+<h2>Updating Documents in a Collection</h2>
+<p>After we have inserted the documents we see that the value/values for some property/properties is/are incorrect. So we make use of update method on the collection to make corrections. Following is the command used to update document in a collection:</p>
+<p>db.collectionName.update(query,update,options)</p>
+<p>Query will specify which documents to update based on filtering criteria and the update to update the value. Let’s take a look at it:</p>
+<div class="code"><code>> db.myFirstCollection.update({fName:"Kyle"}, {$set:{lName:"Moss"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })</code></div>
+<br />
+<div class="code"><code>> db.myFirstCollection.find({fName:"Kyle"})
+{ "_id" : 8, "fName" : "Kyle", "lName" : "Moss" }
+{ "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }</code></div>
+<p>Here you can see that when we make use of update command it only updates the first document matching the query criteria. We will look at updating multiple documents later on using a single command.</p>
+<p>One more variation that I want to show here is using update command without using the $set operator and its impact on the document. Let’s take a look at it and talk about it:</p>
+<div class="code"><code>> db.myFirstCollection.update({fName:"Nuri"}, {lname:"Haveri"})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({lname:"Haveri"})
+{ "_id" : 7, "lname" : "Haveri" }</code></div>
+<p>As you can see it updated the first document that matched our query but one thing to note here is that it has changes the structure of our document, you can see that we have changed property lName value to Haveri but it not only changed that property it also deleted all other properties except _id(which is a special field). So if you directly pass the update criteria without using $set operator than it will remove all the key value pairs from the matching document and updates the documents with the key value pairs specified in the update argument. It is advised not to use update without $set operator.</p>
+<ol>
+    <li>
+        <h3>$set:</h3>
+        <p>One of the use case of this operator we have seen above where we want to modify the value of a property. There might be a case that you want to add a property in some document/documents which does not exist than at that time also we can make use of this operator. Let’s take a look at it:</p>
+        <div class="code"><code>> db.myFirstCollection.find({name:"Scott"})
+{ "_id" : 20, "name" : "Scott", "technologies" : "Angular" }
+
+> db.myFirstCollection.update({name:"Scott"},{$set:{experience:20}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({name:"Scott"})
+{ "_id" : 20, "name" : "Scott", "technologies" : "Angular", "experience" : 20 }</code></div>
+        <p>Here you can see that experience property does not exist on the document where fName is Scott, but after the update statement it is added to the document matching our query criteria.</p>
+    </li>
+    <li>
+        <h3>$unset:</h3>
+        <p>It happens sometimes that we may add a property to a document by mistake than at that time we can use this operator to remove that property. Let’s take a look at it:</p>
+        <div class="code"><code>> db.myFirstCollection.find({name:"John"}).pretty()
+{
+        "_id" : ObjectId("5b193a230f021394ee8cd122"),
+        "name" : "John",
+        "stack" : "MEAN",
+        "technologies" : [
+                "Angular",
+                "Express",
+                "Mongo",
+                "Node",
+                "Passport"
+        ],
+        "address" : {
+                "street" : "Wall Street",
+                "city" : "New York"
+        }
+}
+
+> db.myFirstCollection.update({name:"John"}, {$unset:{technologies:''}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({name:"John"}).pretty()
+{
+        "_id" : ObjectId("5b193a230f021394ee8cd122"),
+        "name" : "John",
+        "stack" : "MEAN",
+        "address" : {
+                "street" : "Wall Street",
+                "city" : "New York"
+        }
+}</code></div>
+        <p>Here you can see that we have removed the key named technologies and its value by making use of this operator. We can pass an arbitrary value or no value for the key while using this operator.</p>
+    </li>
+    <li>
+        <h3>$rename:</h3>
+        <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "fnaem" : "Deborah",
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node"
+        ]
+}
+
+> db.myFirstCollection.update({_id:55}, {$rename:{fnaem:'fName'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+        <p>We being humans are prone to making mistakes, there may be a scenario where while inserting a document we may type incorrect name of the key/property so to correct that we make use of this operator. As you can see here for a document with _id as 55 I have misspelled fName as fNaem so we used this operator to make correction.</p>
+    </li>
+    <li>
+        <h3>$inc:</h3>
+        <p>There are scenarios where we may want to keep count of something and increment or decrement that value based on some operation at that time this operator comes handy. Let’s take a look at its use cases:</p>
+        <div class="code"><code>> db.myFirstCollection.find({_id:56}).pretty()
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 50 }
+
+> db.myFirstCollection.update({_id:56}, {$inc:{scores:1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:56}).pretty()
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 51 }
+
+> db.myFirstCollection.update({_id:56}, {$inc:{scores:5}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:56}).pretty()
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 56 }</code></div>
+        <p>Here we have incremented the value of scores property for the document whose _id is 56.</p>
+        <p>Let’s see how to decrement the value as well:</p>
+        <div class="code"><code>> db.myFirstCollection.update({_id:56}, {$inc:{scores:-1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:56}).pretty()
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 55 }
+
+> db.myFirstCollection.update({_id:56}, {$inc:{scores:-5}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:56}).pretty()
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 50 }</code></div>
+        <p>Here we have decremented the value of the scores property for the document whose _id is 56.</p>
+    </li>
+    <li>
+        <h3>Array Operators:</h3>
+        <ol>
+            <li>
+                <p><b>$push:</b></p>
+                <p>There are cases we have added a property to a document that holds an array of elements and at a later point we want to insert some more elements to that array, at that time we can use this operator. Let’s take a look at it:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:23}).pretty()
+{
+        "_id" : 23,
+        "fName" : "Nuri",
+        "lName" : "Halperin",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "React",
+                "Python"
+        ]
+}
+
+> db.myFirstCollection.update({_id:23}, {$push:{technologies:"React native"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:23}).pretty()
+{
+        "_id" : 23,
+        "fName" : "Nuri",
+        "lName" : "Halperin",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "React",
+                "Python",
+                "React native"
+        ]
+}</code></div>
+                <p>We have added React Native to the array of technologies for the document which has _id property value as 23. Note we make use of $push alone to push a single element into an array. If we want to push multiple elements in an array we make use of $each in combination with $push. Let’s take a look at it:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({_id:55}, {$push:{technologies:{$each: ["React", "React native"]}}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node",
+                "React",
+                "React native"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>You can notice that we have added two elements React and React Native to technologies array of the document which has _id property with value as 55. What would have happened if would not have used $each operator? Let’s take a look a look at it and find out the answer:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:25}).pretty()
+{
+        "_id" : 25,
+        "fName" : "Kyle",
+        "lName" : "Simpson",
+        "technologies" : [
+                "Angular",
+                "SQL",
+                "Express",
+                "Javascript"
+        ]
+}
+
+> db.myFirstCollection.update({_id:25}, {$push:{technologies:["React", "React native"]}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:25}).pretty()
+{
+        "_id" : 25,
+        "fName" : "Kyle",
+        "lName" : "Simpson",
+        "technologies" : [
+                "Angular",
+                "SQL",
+                "Express",
+                "Javascript",
+                [
+                        "React",
+                        "React native"
+                ]
+        ]
+}</code></div>
+                <p>Here you can see that when $each is not used for adding multiple elements to the technologies array it inserted an array as an element of the technologies array.</p>
+                <p>One more important point to note is that when we use $push operator and a property that we are trying to update does not exist in the document than that property will be added to the document and that will hold an array. Let’s take a look at it:</p>
+                <div class="code"><code>> db.myFirstCollection.find({fName:"John"}).pretty()
+{ "_id" : 3, "fName" : "John", "lName" : "Papa" }
+
+> db.myFirstCollection.update({fName:"John"}, {$push:{technologies:"Angular"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({fName:"John"}).pretty()
+{
+        "_id" : 3,
+        "fName" : "John",
+        "lName" : "Papa",
+        "technologies" : [
+                "Angular"
+        ]
+}</code></div>
+                <p>Here you can see that in the document which has fName property value as John technologies array does not exist. But when we fired the update command for pushing elements into the technologies array it added technologies as a property in that document and an array is assigned to it which has an element named Angular.</p>
+            </li>
+            <li>
+                <p><b>$pop:</b></p>
+                <p>We may have to remove elements from an array so we make use of this operator. We can use it for removing elements from the start or end of the array. Let’s look at both these use cases:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node",
+                "React",
+                "React native"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({_id:55}, {$pop:{technologies:1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>Here we said that from the document which has _id property and the value for that is 55 remove an element from the end of the technologies array. We used 1 which tells it to remove an element from the end of the array. Let’s take a look at how to remove an element from the start of the array:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Angular",
+                "Mongo",
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({_id:55}, {$pop:{technologies:-1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Mongo",
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>Here we have used -1 instead of 1 so it removed Angular which is at the beginning of the technologies array of the document which has _id property value as 55.</p>
+            </li>
+            <li>
+                <p><b>$pull:</b></p>
+                <p>There may be a scenario where you have pushed an element twice into an array in a document and now you want to remove it from the document so we make use of this operator. Let’s take a look at it:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Mongo",
+                "Express",
+                "Node",
+                "React",
+                "Mongo"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({_id:55}, {$pull:{technologies:"Mongo"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>Here you can see that in the technologies array of the document with _id as 55 we have inserted Mongo twice so we make use of $pull operator to remove the existence of Mongo from that array. One thing to note here is that it will remove all existences of that element in the array.</p>
+            </li>
+            <li>
+                <p><b>$addToSet:</b></p>
+                <p>In the above example as you can see that when we used $push operator it allowed us to enter duplicate values in the array. There may be a scenario where we want to add unique elements to an array so we can make use of this operator. Let’s see it in action:</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({_id:55}, {$addToSet:{technologies:"Express"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>As you can see that when we tried to add an element whose value is Express to the technologies array of the document whose _id is 55 it didn’t insert it in the array i.e. in the result nModified is 0.</p>
+                <div class="code"><code>> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({_id:55}, {$addToSet:{technologies:"Angular"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.myFirstCollection.find({_id:55}).pretty()
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React",
+                "Angular"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>Here when tried to add an element whose value is Angular which does not exist in the technologies array of the document whose _id is 55 it got added to the array successfully i.e. in the result nModified is 1. Till now we have seen how to make use of update method and update the document that is the first match out of the documents fetched by querying the collection as per query argument. Now let’s see what we have to do when we have to update multiple documents using a single command.</p>
+            </li>
+        </ol>
+    </li>    
+            <li>
+                <h3>Multi Option:</h3>
+                <p>There may be scenario where you want to update multiple documents at a time in a collection so in that case we make use of this option with our update command. Let’s take a look at it:</p>
+                <div class="code"><code>> db.myFirstCollection.find({fName:"Deborah"}).pretty()
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Kurata" }
+{
+        "_id" : 55,
+        "lName" : "Kurata",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React",
+                "Angular"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.update({fName:"Deborah"}, {$set:{lName:"Aniston"}}, {multi:true})
+WriteResult({ "nMatched" : 2, "nUpserted" : 0, "nModified" : 2 })
+
+> db.myFirstCollection.find({fName:"Deborah"}).pretty()
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Aniston" }
+{
+        "_id" : 55,
+        "lName" : "Aniston",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React",
+                "Angular"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+                <p>Here we have updated all the documents in the collection which has an fName property and its value is Deborah and we have set the value of lName property as Aniston in all the matching documents found as per query argument.</p>
+            </li>
+            <li>
+                <h3>updateMany method:</h3>
+                <p>If we want to update multiple documents in a collection based on our query argument than we can use this method. Let’s take a look at it:</p>
+                <div class="code"><code>> db.myFirstCollection.find({fName:"Deborah"}).pretty()
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Aniston" }
+{
+        "_id" : 55,
+        "lName" : "Aniston",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React",
+                "Angular"
+        ],
+        "fName" : "Deborah"
+}
+
+> db.myFirstCollection.updateMany({fName:"Deborah"}, {$set:{lName:"Williams"}})
+{ "acknowledged" : true, "matchedCount" : 2, "modifiedCount" : 2 }
+
+> db.myFirstCollection.find({fName:"Deborah"}).pretty()
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Williams" }
+{
+        "_id" : 55,
+        "lName" : "Williams",
+        "technologies" : [
+                "Express",
+                "Node",
+                "React",
+                "Angular"
+        ],
+        "fName" : "Deborah"
+}</code></div>
+            </li>
+     <li>
+         <h3>upsert option:</h3>
+         <p>There may be scenario where we want to insert a document into a collection as part of update method when no documents exists in our collection for the specified query argument. When we make use of update method on a collection if no document is fetched based on query argument than it does not do anything. By default the value of upsert is false. Let’s take a look at it with its default value:</p>
+         <div class="code"><code>> db.myFirstCollection.update({_id:59}, {fName:"Shaun"})
+WriteResult({ "nMatched" : 0, "nUpserted" : 0, "nModified" : 0 })
+
+> db.myFirstCollection.find({_id:59})
+
+></code></div>
+         <p>Here you can see that when we tried to update a document which does not exist (with _id property value as 59) than it does not do anything. Let’s take a look at it by setting upsert as true:</p>
+         <div class="code"><code>> db.myFirstCollection.update({_id:59}, {fName:"Shaun"}, {upsert:true})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : 59 })
+
+> db.myFirstCollection.find({_id:59})
+{ "_id" : 59, "fName" : "Shaun" }</code></div>
+         <p>Here you can see that when we set upsert to true and tried to update a document that does not exist in the collection than it inserted a document with specified query and update arguments.</p>
+     </li>   
+</ol>
