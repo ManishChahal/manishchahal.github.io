@@ -1,0 +1,67 @@
+---  
+layout: post  
+title: "Basic Operations in Mongo Db - 5"  
+date: 2018-06-14  
+---
+
+<h2>Deleting Documents from a Collection</h2>
+<p>After we have added documents into a collection at a later point in time we realize that some of the documents or all of the documents that we have inserted are not valid than in that case we have to delete those documents from the collection. So for deleting we make use of following methods based on our need:</p>
+<h3>deleteOne:</h3>
+<p>If we want to delete the first document that is matched in the collection as per our query argument than we go for this method. Let’s take a look at it:</p>
+<div class="code"><code>> db.myFirstCollection.find({fName:"Deborah"})
+{ "_id" : 9, "fName" : "Deborah" }
+{ "_id" : 55, "lName" : "Williams", "technologies" : [ "Express", "Node", "React", "Angular" ], "fName" : "Deborah" }
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Williams" }
+
+> db.myFirstCollection.deleteOne({fName:"Deborah"})
+{ "acknowledged" : true, "deletedCount" : 1 }
+
+> db.myFirstCollection.find({fName:"Deborah"})
+{ "_id" : 55, "lName" : "Williams", "technologies" : [ "Express", "Node", "React", "Angular" ], "fName" : "Deborah" }
+{ "_id" : 6, "fName" : "Deborah", "lName" : "Williams" }</code></div>
+
+<h3>deleteMany:</h3>
+<p>If we want to delete multiple documents from our collection that meets the query criteria than we can make use of this method. Let’s take a look at it:</p>
+<div class="code"><code>> db.myFirstCollection.find({fName:"Nuri"})
+{ "_id" : 23, "fName" : "Nuri", "lName" : "Halperin", "technologies" : [ "Angular", "Mongo", "React", "Python", "React native" ] }
+{ "_id" : 9, "fName" : "Nuri", "lName" : "Halperin" }
+
+> db.myFirstCollection.deleteMany({fName:"Nuri"})
+{ "acknowledged" : true, "deletedCount" : 2 }
+
+> db.myFirstCollection.find({fName:"Nuri"})
+
+></code></div>
+
+<h3>remove:</h3>
+<p>We can make use of this method to perform operations of deleteOne and deleteMany methods. Let’s take a look at it, how we can use it to delete single element:</p>
+<div class="code"><code>> db.myFirstCollection.find({fName:"Kyle"})
+{ "_id" : 8, "fName" : "Kyle", "lName" : "Moss" }
+{ "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 50 }
+{ "_id" : 25, "fName" : "Kyle", "lName" : "Simpson", "technologies" : [ "Angular", "SQL", "Express", "Javascript", [ "React", "React native" ] ] }
+
+> db.myFirstCollection.remove({fName:"Kyle"}, {justOne:true})
+WriteResult({ "nRemoved" : 1 })
+
+> db.myFirstCollection.find({fName:"Kyle"})
+{ "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 50 }
+{ "_id" : 25, "fName" : "Kyle", "lName" : "Simpson", "technologies" : [ "Angular", "SQL", "Express", "Javascript", [ "React", "React native" ] ] }</code></div>
+<p>By default the value of justOne option is false. Let’s take a look at it to delete multiple documents:</p>
+<div class="code"><code>> db.myFirstCollection.find({lName:"Simpson"})
+{ "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }
+{ "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 50 }
+{ "_id" : 25, "fName" : "Kyle", "lName" : "Simpson", "technologies" : [ "Angular", "SQL", "Express", "Javascript", [ "React", "React native" ] ] }
+{ "_id" : 13, "lName" : "Simpson" }
+{ "_id" : 14, "lName" : "Simpson" }
+
+> db.myFirstCollection.remove({lName:"Simpson", fName:{$exists:false}})
+WriteResult({ "nRemoved" : 2 })
+
+> db.myFirstCollection.find({lName:"Simpson"})
+{ "_id" : 2, "fName" : "Lisa", "lName" : "Simpson" }
+{ "_id" : 10, "fName" : "Kyle", "lName" : "Simpson" }
+{ "_id" : 56, "fName" : "Kyle", "lName" : "Simpson", "scores" : 50 }
+{ "_id" : 25, "fName" : "Kyle", "lName" : "Simpson", "technologies" : [ "Angular", "SQL", "Express", "Javascript", [ "React", "React native" ] ] }</code></div>
