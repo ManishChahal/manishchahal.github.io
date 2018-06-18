@@ -6,7 +6,6 @@ title: Manish Chahal's Blog
 	<ul class="posts">
 
 	  {% for post in site.posts %}
-	    <li><span>{{ post.date | date_to_string }}</span> » <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a></li></br>
-<span style="font-size: 1em;">{{post.desc}}</span></br>
+	    <li><span>{{ post.date | date_to_string }}</span> » <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a></li></br><span style="font-size: 1em;">{{post.desc}}</span></br>
 	  {% endfor %}
 	</ul>
