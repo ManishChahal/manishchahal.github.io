@@ -280,3 +280,186 @@ date: 2018-06-18
     <li><p>Then we limited the number of documents to be fetched each time to be 3, so that we fetch only 3 documents at a time from the database.</p></li>
     <li><p>After that we used skip method to skip the documents that have been displayed in the previous iteration.</p></li>
 </ol>
+<br />
+<h2>Indexing</h2>
+<p>Whenever we work on a large application and size of our data grows than the time taken to fetch the documents also increases which is not liked by anyone, at that time indexes comes into picture. In my opinion index is just an array which holds the documents in sorted order (ascending or descending) and whenever a collection is queried using the key involved in index creation than our index array is scanned instead of the collection. Let’s take a look at it diagrammatically. Suppose we have an index on the league field in our collection in ascending order than it can be represented as</p>
+<table width="100%">
+        <tr><th><p>Property Value</p></th><th><p>Documents</p></th></tr>
+        <tr><td><p>Champions League</p></td><td><p>Doc1, doc2, doc3…..</p></td></tr>
+        <tr><td><p>La Liga</p></td><td><p>Doc1, doc2, doc3…..</p></td></tr>
+</table>
+<p>Suppose we fire the following command to fetch the documents from our collection</p>
+<p>db.footballersData.find ({league : “Champions League”})</p>
+<p>Than instead of going to the collection and scanning all the documents in the collection to fetch the documents that meet our query criteria it will scan the index and will retrieve the documents.</p>
+<br />
+<p>By default _id field is the index that exists on our collection. To get the indexes created on a collection you can use getIndexes method on the collection.</p>
+<div class="code"><code>> db.footballersData.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "myFirstDatabase.footballersData"
+        }
+]</code></div>
+<p>In order to create an index on a collection we use createIndex method and then specify the properties that will participate in index creation and the order. Let’s take a look at creating an index:</p>
+<div class="code"><code>> db.footballersData.find({goalsScored:10}).explain("executionStats")
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "myFirstDatabase.footballersData",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "goalsScored" : {
+                                "$eq" : 10
+                        }
+                },
+                "winningPlan" : {
+                        "stage" : "COLLSCAN",
+                        "filter" : {
+                                "goalsScored" : {
+                                        "$eq" : 10
+                                }
+                        },
+                        "direction" : "forward"
+                },
+                "rejectedPlans" : [ ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 1,
+                "executionTimeMillis" : 3,
+                "totalKeysExamined" : 0,
+                "totalDocsExamined" : 12,
+                "executionStages" : {
+                        "stage" : "COLLSCAN",
+                        "filter" : {
+                                "goalsScored" : {
+                                        "$eq" : 10
+                                }
+                        },
+                        "nReturned" : 1,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 14,
+                        "advanced" : 1,
+                        "needTime" : 12,
+                        "needYield" : 0,
+                        "saveState" : 0,
+                        "restoreState" : 0,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "direction" : "forward",
+                        "docsExamined" : 12
+                }
+        },
+        "ok" : 1
+}</code></div>
+<p>As you can see here when we tried to fetch the documents from the collection where goalsScored property exists and the value for that is 10 than in the executionStats it says to retrieve those documents it will have to scan 12 documents which is the total number of documents present available in our collection and there are 1 documents that will be returned to us which meets our query. Let’s create an index on the goalsScored field and see the difference:</p>
+<div class="code"><code>> db.footballersData.createIndex({goalsScored:1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}</code></div>
+<p>Now we have our index created on the goalsScored field. Let’s try to retrieve the documents as we did in above query.</p>
+<div class="code"><code>> db.footballersData.find({goalsScored:10}).explain("executionStats")
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "myFirstDatabase.footballersData",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "goalsScored" : {
+                                "$eq" : 10
+                        }
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "goalsScored" : 1
+                                },
+                                "indexName" : "goalsScored_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "goalsScored" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 2,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "goalsScored" : [
+                                                "[10.0, 10.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [ ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 1,
+                "executionTimeMillis" : 6,
+                "totalKeysExamined" : 1,
+                "totalDocsExamined" : 1,
+                "executionStages" : {
+                        "stage" : "FETCH",
+                        "nReturned" : 1,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 2,
+                        "advanced" : 1,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 0,
+                        "restoreState" : 0,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "docsExamined" : 1,
+                        "alreadyHasObj" : 0,
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "nReturned" : 1,
+                                "executionTimeMillisEstimate" : 0,
+                                "works" : 2,
+                                "advanced" : 1,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 0,
+                                "restoreState" : 0,
+                                "isEOF" : 1,
+                                "invalidates" : 0,
+                                "keyPattern" : {
+                                        "goalsScored" : 1
+                                },
+                                "indexName" : "goalsScored_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "goalsScored" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 2,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "goalsScored" : [
+                                                "[10.0, 10.0]"
+                                        ]
+                                },
+                                "keysExamined" : 1,
+                                "seeks" : 1,
+                                "dupsTested" : 0,
+                                "dupsDropped" : 0,
+                                "seenInvalidated" : 0
+                        }
+                }
+        },
+        "ok" : 1
+}</code></div>
+<p>Here as you can see that when we tried to retrieve the documents after index exists on that field now the totalDocsExamined is 1 and nReturned is also 1 which means that for retrieving documents by some property if an index exists for that property than index will be scanned in place of collection. If we use multiple filtering criteria to find documents and in the filtering criteria the property/properties on which index exists are used than index array will be used to retrieve documents.</p>
