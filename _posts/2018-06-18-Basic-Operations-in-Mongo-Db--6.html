@@ -1,0 +1,282 @@
+---  
+layout: post  
+title: "Basic Operations in Mongo Db - 6"  
+date: 2018-06-18  
+---
+
+<h2>Aggregation</h2>
+
+<p>There are scenarios where you want to display total scores of a student in a particular subject whose exam he/she has taken multiple times and calculate average for projection or number of goals a footballer has scored in a league in every season. For that we make use of aggregation.</p>
+<ol>
+    <li>
+        <h3>$group :</h3>
+        <p>This takes in an object which defines on the basis of which field documents are to be grouped. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+
+> db.footballersData.aggregate([{$group:{_id:"$league", totalGoalsPerLeague:{$sum:"$goalsScored"}}}])
+{ "_id" : "Champions League", "totalGoalsPerLeague" : 100 }
+{ "_id" : "La Liga", "totalGoalsPerLeague" : 280 }</code></div>
+        <p>Here we want to display the total number of goals scored in each league. So as you can see that we have a _id property in $group object which takes in the field by which we have to group than after that we specify the operation. While passing a property to the _id of the $group object or to the operation we have to prefix it with $.</p>
+    </li>
+
+    <li>
+        <h3>$match:</h3>
+        <p>In the above example we have grouped the documents based on the league i.e. all the documents that exist where league is a property we have taken the goalsScored by the players in that league and added them by league value. If I want to display the total goals scored by a player in a league than I have to filter my documents by players before grouping them by league so in that case this operator comes into picture. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.aggregate([{$match:{fName:"Cristiano"}}, {$group:{_id:"$league", totalGoalsPerLeague:{$sum:"$goalsScored"}}}])
+{ "_id" : "Champions League", "totalGoalsPerLeague" : 100 }
+{ "_id" : "La Liga", "totalGoalsPerLeague" : 180 }</code></div>
+        <p>Here as you can see that it will fetch all the documents which matches our criteria specified in the $match and then pipe those documents to the $group for aggregation.</p>
+
+        <p>If we want to get the total number of goals scored by each player in each league than we can pass multiple property names to the _id of the $group. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.aggregate([{$group:{_id:{league:"$league", fName:"$fName", lName:"$lName"}, totalGoalsPerLeague:{$sum:"$goalsScored"}}}])
+{ "_id" : { "league" : "La Liga", "fName" : "Cristiano", "lName" : "Ronaldo" }, "totalGoalsPerLeague" : 180 }
+{ "_id" : { "league" : "Champions League", "fName" : "Cristiano", "lName" : "Ronaldo" }, "totalGoalsPerLeague" : 100 }
+{ "_id" : { "league" : "La Liga", "fName" : "Gareth", "lName" : "Bale" }, "totalGoalsPerLeague" : 100 }</code></div>
+    </li>
+
+    <li>
+        <h3>$project:</h3>
+        <p>To the $project object we can only pass the property values that are included in the $group _id property. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.aggregate([{$group:{_id:{league:"$league", fName:"$fName", lName:"$lName"}, totalGoalsPerLeague:{$sum:"$goalsScored"}}}, {$project:{league:1, fName:1, lName:1}}])
+{ "_id" : { "league" : "La Liga", "fName" : "Cristiano", "lName" : "Ronaldo" } }
+{ "_id" : { "league" : "Champions League", "fName" : "Cristiano", "lName" : "Ronaldo" } }
+{ "_id" : { "league" : "La Liga", "fName" : "Gareth", "lName" : "Bale" } }</code></div>
+    </li>
+</ol>
+<br />
+
+<h2>Distinct and Count</h2>
+<div class="code"><code>> db.footballersData.distinct("fName")
+[ "Gareth", "Cristiano" ]
+> db.footballersData.count({fName:"Cristiano"})
+10</code></div>
+<p>If we want to get the values for property i.e. if we have fName property in the documents and we want to know what are the values for that property in all documents where that property exists than we can make use of distinct method.</p>
+<p>If we want to get the count of documents where a key value pair exists than we can make use of count method. If we want to get the count of all total number of documents in the collection than we can use count without passing it any filtering criteria.</p>
+<br />
+<h2>Sort, Limit & Skip</h2>
+<ol>
+    <li>
+        <h3>Sort Method:</h3>
+        <p>This method is used for sorting the documents in a collection in ascending or descending order. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.find().sort({league:1})
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }</code></div>
+        <p>Here we have specified that we want to fetch the documents from the collection which should be sorted in ascending order and we want to sort them by league property value. Here 1 after the league means we want to sort in ascending order. To sort in descending order we use -1. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find().sort({fName:-1})
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }</code></div>
+        <p>We can also pass multiple sorting criteria to this method. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find().sort({league:1, goalsScored:-1})
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }</code></div>
+    </li>
+
+    <li>
+        <h3>Limit method:</h3>
+        <p>There may be a scenario where we want to fetch n number of documents from a collection than we make use of this operator. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.find().limit(5)
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+> db.footballersData.find().limit(-5)
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }</code></div>
+        <p>Here as you can see that we have fired the find command to fetch all the documents from the collection but limited the number of documents to be fetched using this method. If you pass it positive or negative values it does not matter because at the end negative value will be converted to positive.</p>
+        <p>Let’s combine this method with sort method and see how to fetch top 5 results and bottom 5 results of a collection when sorted.</p>
+        <div class="code"><code>> db.footballersData.find().sort({league:1}).limit(5)
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.find().sort({league:-1}).limit(5)
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }</code></div>
+    </li>
+
+    <li>
+        <h3>Skip method:</h3>
+        <p>There may be a scenario when we want to fetch some documents from a collection but we have to skip first few documents than this method is used. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.find().skip(5)
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }</code></div>
+        <p>Here you can see that we have fetched n-5 documents from the collection as we skipped first 5 documents.</p>
+        <p>We can also make use of this method to fetch n number of documents from the bottom of the collection. Let’s take a look at it:</p>
+        <div class="code"><code>> db.footballersData.find().skip(db.footballersData.count() - 5)
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }</code></div>
+        <p>Here as you can see that we have passed in a command that will fetch all the documents from the collection and then skip first n-5 documents so we will get bottom 5 documents from the collection. For fetching top n number of documents you can use limit method and specify the number of documents to fetch from the beginning.</p>
+    </li>
+</ol>
+<p>As we have seen these three operators let’s take a look at how we can use these together to achieve pagination.</p>
+<div class="code"><code>> db.footballersData.find()
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }
+> db.footballersData.find().sort({league:-1}).limit(3).skip(0)
+{ "_id" : ObjectId("5b26835999e1647ee04cd3f0"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b26835a99e1647ee04cd3f1"), "fName" : "Gareth", "lName" : "Bale", "league" : "La Liga", "goalsScored" : 50, "year" : 2011 }
+{ "_id" : ObjectId("5b27927001271eb9de48c821"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 25, "year" : 2011 }
+> db.footballersData.find().sort({league:-1}).limit(3).skip(3)
+{ "_id" : ObjectId("5b2792ce01271eb9de48c822"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 30, "year" : 2012 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c823"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 35, "year" : 2013 }
+{ "_id" : ObjectId("5b2792ce01271eb9de48c824"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 40, "year" : 2014 }
+> db.footballersData.find().sort({league:-1}).limit(3).skip(6)
+{ "_id" : ObjectId("5b2792ce01271eb9de48c825"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "La Liga", "goalsScored" : 50, "year" : 2015 }
+{ "_id" : ObjectId("5b2792ff01271eb9de48c826"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 10, "year" : 2011 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c827"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 15, "year" : 2012 }
+> db.footballersData.find().sort({league:-1}).limit(3).skip(9)
+{ "_id" : ObjectId("5b27933b01271eb9de48c828"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 20, "year" : 2013 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c829"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 25, "year" : 2014 }
+{ "_id" : ObjectId("5b27933b01271eb9de48c82a"), "fName" : "Cristiano", "lName" : "Ronaldo", "league" : "Champions League", "goalsScored" : 30, "year" : 2015 }</code></div>
+<p>As you can see here:</p>
+<ol>
+    <li><p>We have sorted the documents in the collection by league in descending order.</p></li>
+    <li><p>Then we limited the number of documents to be fetched each time to be 3, so that we fetch only 3 documents at a time from the database.</p></li>
+    <li><p>After that we used skip method to skip the documents that have been displayed in the previous iteration.</p></li>
+</ol>
